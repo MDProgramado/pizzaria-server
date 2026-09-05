@@ -13,7 +13,7 @@ public class OrderItem {
 
     public OrderItem(){}
 
-    public OrderItem(UUID product_id, Integer quantity, BigDecimal unit_price_sale) {
+    public OrderItem(Integer quantity, BigDecimal unit_price_sale) {
         this.id = UUID.randomUUID();
         this.tenant_at = UUID.randomUUID();
         this.order_id = UUID.randomUUID();
