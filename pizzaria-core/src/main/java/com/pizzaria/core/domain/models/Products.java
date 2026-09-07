@@ -1,6 +1,7 @@
 package com.pizzaria.core.domain.models;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
@@ -10,21 +11,19 @@ public class Products {
     private String name;
     private BigDecimal base_price;
     private boolean is_active;
-    private OffsetDateTime created_at;
-    private OffsetDateTime updated_at;
-    private OffsetDateTime deleted_at;
+    private LocalDateTime created_at;
+    private LocalDateTime updated_at;
+    private LocalDateTime deleted_at;
 
     public Products(){}
 
-    public Products(UUID id, UUID tenant_id, String name, BigDecimal base_price, boolean is_active, OffsetDateTime created_at, OffsetDateTime updated_at, OffsetDateTime deleted_at) {
-        this.id = id;
-        this.tenant_id = tenant_id;
+    public Products(String name, BigDecimal base_price, boolean is_active, LocalDateTime created_at) {
+        this.id = UUID.randomUUID();
+        this.tenant_id = UUID.randomUUID();
         this.name = name;
         this.base_price = base_price;
         this.is_active = is_active;
         this.created_at = created_at;
-        this.updated_at = updated_at;
-        this.deleted_at = deleted_at;
     }
 
     public UUID getId() {
@@ -46,16 +45,32 @@ public class Products {
     public boolean isIs_active() {
         return this.is_active;
     }
+    public void setIs_active(boolean is_active){
+        this.is_active = is_active;
+    }
 
-    public OffsetDateTime getCreated_at() {
+
+    public LocalDateTime getCreated_at() {
         return this.created_at;
     }
 
-    public OffsetDateTime getUpdated_at() {
+    public LocalDateTime getUpdated_at() {
         return this.updated_at;
     }
 
-    public OffsetDateTime getDeleted_at() {
+    public LocalDateTime getDeleted_at() {
         return this.deleted_at;
+    }
+
+    public void setDeleted_at(LocalDateTime deleted_at) {
+        this.deleted_at = deleted_at;
+    }
+
+    public void setUpdated_at(LocalDateTime updated_at) {
+        this.updated_at = updated_at;
+    }
+
+    public void setCreated_at(LocalDateTime created_at) {
+        this.created_at = created_at;
     }
 }

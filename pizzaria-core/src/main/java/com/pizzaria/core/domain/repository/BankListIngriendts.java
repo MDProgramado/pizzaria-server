@@ -13,13 +13,16 @@ public class BankListIngriendts {
     private static List<Ingredients> listaIngredients = new ArrayList<>();
 
     public static List<Ingredients> getAllIngredients(){
-        return listaIngredients;
+
+        return listaIngredients.stream()
+                .filter(i -> i.getDeleted_at() == null)
+                .toList();
     }
 
 
     public static Ingredients getIngredientsId(UUID id){
        return listaIngredients.stream()
-               .filter(ingredients -> ingredients.getId().equals(id))
+               .filter(ingredients -> ingredients.getId().equals(id) && ingredients.getDeleted_at() == null)
                .findFirst()
                .orElse(null);
     }
@@ -30,15 +33,25 @@ public class BankListIngriendts {
 
     }
 
-    public static boolean delete(UUID id){
-
-        if (!listaIngredients.isEmpty()){
-            System.out.println("Lista vazía!");
+    public static boolean deleteId(UUID id){
+        Ingredients ingredients = getIngredientsId(id);
+        if (ingredients != null) {
+            ingredients.setDeleted_at(LocalDateTime.now());
+            return true;
         }
-
-        return listaIngredients.removeIf(ingredients -> ingredients.getId().equals(id));
-
+        return false;
     }
+    public static boolean deleteName(String name) {
+        return listaIngredients.stream()
+                .filter(i -> i.getName().equalsIgnoreCase(name) && i.getDeleted_at() == null)
+                .findFirst()
+                .map(ingredient -> {
+                    ingredient.setDeleted_at(LocalDateTime.now());
+                    return true;
+                })
+                .orElse(false);
+    }
+
 
 
 }

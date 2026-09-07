@@ -3,27 +3,28 @@ package com.pizzaria.core.domain.services;
 import com.pizzaria.core.domain.enums.OrderStatus;
 import com.pizzaria.core.domain.models.OrderItem;
 import com.pizzaria.core.domain.models.Orders;
-import com.pizzaria.core.domain.repository.BankListItem;
+
 
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+
+
 
 public class OrderService extends Orders {
+    List<OrderItem> items = new ArrayList<>();
 
 
-     static BankListItem items = new BankListItem();
+    public String addItem( Integer quantify, BigDecimal init_price){
+        if(this.getStatus() != OrderStatus.PENDING){
+            throw new IllegalStateException("Não é possível alterar um pedido com status: " + this.getStatus());
+        }
+        OrderItem item = new OrderItem(quantify, init_price);
 
+        this.items.add(item);
 
-    public BankListItem addItem(Integer quantity, BigDecimal unit_price_sale){
-       if(this.getStatus() != OrderStatus.PENDING){
-           throw new IllegalStateException("Não é possível alterar um pedido com status: " + this.getStatus());
-       }
-       BankListItem item = new BankListItem();
-
-      return BankListItem.save(item);
+        return "Item adicionado com sucesso!";
     }
 
     public String removeItem(Integer quantify, BigDecimal init_price) {

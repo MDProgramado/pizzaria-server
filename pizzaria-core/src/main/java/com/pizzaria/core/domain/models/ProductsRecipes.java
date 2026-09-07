@@ -5,24 +5,24 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 public class ProductsRecipes {
-    private UUID productId;
+    private UUID product_Id;
     private UUID ingredientId;
     private BigDecimal quantityRequired;
 
     public ProductsRecipes(){}
 
-    public ProductsRecipes(UUID productId, UUID ingredientId, BigDecimal quantityRequired) {
-        this.productId = productId;
-        this.ingredientId = ingredientId;
+    public ProductsRecipes(BigDecimal quantityRequired) {
+        this.product_Id = UUID.randomUUID();
+        this.ingredientId = UUID.randomUUID();
         this.quantityRequired = quantityRequired;
     }
 
-    public UUID getProductId() {
-        return productId;
+    public UUID getProduct_Id() {
+        return product_Id;
     }
 
-    public void setProductId(UUID productId) {
-        this.productId = productId;
+    public void setProduct_Id(UUID product_Id) {
+        this.product_Id = product_Id;
     }
 
     public UUID getIngredientId() {
