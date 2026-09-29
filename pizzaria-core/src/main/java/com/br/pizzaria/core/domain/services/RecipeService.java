@@ -1,0 +1,74 @@
+package com.br.pizzaria.core.domain.services;
+
+import com.br.pizzaria.core.domain.models.Ingredients;
+import com.br.pizzaria.core.domain.models.ProductsRecipes;
+import com.br.pizzaria.core.domain.models.StockCheckResult;
+import com.br.pizzaria.core.domain.repository.BankListIngriendts;
+import com.br.pizzaria.core.domain.repository.BankListProductsRecipes;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+public class RecipeService {
+
+    public StockCheckResult checkStockForProduct(UUID productId, Integer desiredQuantity) {
+
+        List<ProductsRecipes> recipes = BankListProductsRecipes.getRecipesByProductId(productId);
+
+        if (recipes.isEmpty()) {
+            return StockCheckResult.insufficient(List.of("Produto não possui receita cadastrada."));
+        }
+
+        List<String> missingIngredients = new ArrayList<>();
+
+        // Converte a quantidade do produto (Integer) para BigDecimal para o cálculo preciso dos ingredientes
+        BigDecimal quantityAsBigDecimal = BigDecimal.valueOf(desiredQuantity);
+
+        for (ProductsRecipes recipe : recipes) {
+
+            // Pega o UUID do ingrediente associado à receita
+
+            UUID ingredientId = (recipe.getIngredientId() != null)
+                    ? recipe.getIngredientId()
+                    : null;
+
+            if (ingredientId == null) {
+                missingIngredients.add("Receita com ingrediente não associado.");
+                continue;
+            }
+
+
+            Ingredients currentIngredient = BankListIngriendts.getIngredientsId(ingredientId);
+
+            if (currentIngredient == null) {
+                missingIngredients.add("Ingrediente não encontrado no cadastro (ID: " + ingredientId + ")");
+                continue;
+            }
+
+
+            BigDecimal totalRequired = recipe.getQuantityRequired().multiply(quantityAsBigDecimal);
+
+
+            if (currentIngredient.getCurrent_balance().compareTo(totalRequired) < 0) {
+                String errorMsg = String.format(
+                        "Ingrediente '%s' insuficiente. Necessário: %s %s, Em Estoque: %s %s",
+                        currentIngredient.getName(),
+                        totalRequired,
+                        currentIngredient.getUnit_measure(),
+                        currentIngredient.getCurrent_balance(),
+                        currentIngredient.getUnit_measure()
+                );
+                missingIngredients.add(errorMsg);
+            }
+        }
+
+
+        if (missingIngredients.isEmpty()) {
+            return StockCheckResult.success();
+        } else {
+            return StockCheckResult.insufficient(missingIngredients);
+        }
+    }
+}
