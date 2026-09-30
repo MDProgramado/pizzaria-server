@@ -51,6 +51,20 @@ public class BankListIngriendts {
                 .orElse(false);
     }
 
+    public static boolean debitBalance(UUID ingrendientId, BigDecimal quantity){
+
+       Ingredients ingredient = getIngredientsId(ingrendientId);
+
+       if (ingredient != null){
+           BigDecimal novoSaldo = ingredient.getCurrent_balance().subtract(quantity);
+
+           ingredient.setCurrent_balance(novoSaldo);
+           ingredient.setUpdated_at(LocalDateTime.now());
+
+           return true;
+       }
+        return false;
+    }
 
 }
 

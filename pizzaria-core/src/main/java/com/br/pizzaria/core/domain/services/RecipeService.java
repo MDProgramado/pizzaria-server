@@ -13,6 +13,16 @@ import java.util.UUID;
 
 public class RecipeService {
 
+    private static final Object lock = new Object();
+
+
+    private BigDecimal calcularTotalNecessario(ProductsRecipes recipe, Integer desiredQuantity) {
+
+        BigDecimal quantityAsBigDecimal = BigDecimal.valueOf(desiredQuantity);
+
+        return recipe.getQuantityRequired().multiply(quantityAsBigDecimal);
+    }
+
     public StockCheckResult checkStockForProduct(UUID productId, Integer desiredQuantity) {
 
         List<ProductsRecipes> recipes = BankListProductsRecipes.getRecipesByProductId(productId);
@@ -23,22 +33,13 @@ public class RecipeService {
 
         List<String> missingIngredients = new ArrayList<>();
 
-        // Converte a quantidade do produto (Integer) para BigDecimal para o cálculo preciso dos ingredientes
-        BigDecimal quantityAsBigDecimal = BigDecimal.valueOf(desiredQuantity);
-
         for (ProductsRecipes recipe : recipes) {
-
-            // Pega o UUID do ingrediente associado à receita
-
-            UUID ingredientId = (recipe.getIngredientId() != null)
-                    ? recipe.getIngredientId()
-                    : null;
+            UUID ingredientId = (recipe.getIngredientId() != null) ? recipe.getIngredientId() : null;
 
             if (ingredientId == null) {
                 missingIngredients.add("Receita com ingrediente não associado.");
                 continue;
             }
-
 
             Ingredients currentIngredient = BankListIngriendts.getIngredientsId(ingredientId);
 
@@ -47,9 +48,7 @@ public class RecipeService {
                 continue;
             }
 
-
-            BigDecimal totalRequired = recipe.getQuantityRequired().multiply(quantityAsBigDecimal);
-
+            BigDecimal totalRequired = calcularTotalNecessario(recipe, desiredQuantity);
 
             if (currentIngredient.getCurrent_balance().compareTo(totalRequired) < 0) {
                 String errorMsg = String.format(
@@ -64,11 +63,46 @@ public class RecipeService {
             }
         }
 
-
         if (missingIngredients.isEmpty()) {
             return StockCheckResult.success();
         } else {
             return StockCheckResult.insufficient(missingIngredients);
+        }
+    }
+
+
+    public StockCheckResult processInventoryConsumption(UUID productId, Integer desiredQuantity){
+
+        synchronized (lock) {
+
+            StockCheckResult result = checkStockForProduct(productId, desiredQuantity);
+
+            if (!result.hasStock()) {
+                return result;
+            }
+
+            List<ProductsRecipes> recipes = BankListProductsRecipes.getRecipesByProductId(productId);
+
+
+            List<String> falhasNoDebito = new ArrayList<>();
+
+            for (ProductsRecipes recipe : recipes) {
+                BigDecimal totalNecessario = calcularTotalNecessario(recipe, desiredQuantity);
+
+
+                boolean debitoRealizado = BankListIngriendts.debitBalance(recipe.getIngredientId(), totalNecessario);
+
+                if (!debitoRealizado) {
+                    falhasNoDebito.add("Falha sistêmica: O ingrediente ID " + recipe.getIngredientId() + " sumiu durante o débito.");
+                }
+            }
+
+
+            if (!falhasNoDebito.isEmpty()) {
+                return StockCheckResult.insufficient(falhasNoDebito);
+            }
+
+            return StockCheckResult.success();
         }
     }
 }
