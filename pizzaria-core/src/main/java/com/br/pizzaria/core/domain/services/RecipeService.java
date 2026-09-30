@@ -16,7 +16,7 @@ public class RecipeService {
     private static final Object lock = new Object();
 
 
-    private BigDecimal calcularTotalNecessario(ProductsRecipes recipe, Integer desiredQuantity) {
+    private BigDecimal calculateTotalRequired(ProductsRecipes recipe, Integer desiredQuantity) {
 
         BigDecimal quantityAsBigDecimal = BigDecimal.valueOf(desiredQuantity);
 
@@ -34,7 +34,9 @@ public class RecipeService {
         List<String> missingIngredients = new ArrayList<>();
 
         for (ProductsRecipes recipe : recipes) {
-            UUID ingredientId = (recipe.getIngredientId() != null) ? recipe.getIngredientId() : null;
+            UUID ingredientId = recipe.getIngredientId();
+
+
 
             if (ingredientId == null) {
                 missingIngredients.add("Receita com ingrediente não associado.");
@@ -48,7 +50,7 @@ public class RecipeService {
                 continue;
             }
 
-            BigDecimal totalRequired = calcularTotalNecessario(recipe, desiredQuantity);
+            BigDecimal totalRequired = calculateTotalRequired(recipe, desiredQuantity);
 
             if (currentIngredient.getCurrent_balance().compareTo(totalRequired) < 0) {
                 String errorMsg = String.format(
@@ -87,7 +89,7 @@ public class RecipeService {
             List<String> falhasNoDebito = new ArrayList<>();
 
             for (ProductsRecipes recipe : recipes) {
-                BigDecimal totalNecessario = calcularTotalNecessario(recipe, desiredQuantity);
+                BigDecimal totalNecessario = calculateTotalRequired(recipe, desiredQuantity);
 
 
                 boolean debitoRealizado = BankListIngriendts.debitBalance(recipe.getIngredientId(), totalNecessario);
