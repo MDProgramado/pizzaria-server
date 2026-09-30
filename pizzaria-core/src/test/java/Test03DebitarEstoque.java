@@ -22,7 +22,7 @@ public class Test03DebitarEstoque {
         BankListIngriendts.save(
                 "Farinha de trigo",
                 "g",
-                new BigDecimal("1000"),
+                new BigDecimal("500"),
                 new BigDecimal("3"),
                 LocalDateTime.now()
         );
