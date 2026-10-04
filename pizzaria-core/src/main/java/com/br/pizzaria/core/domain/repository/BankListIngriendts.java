@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-public class BankListIngriendts {
+public class BankListIngriendts  {
     public static List<Ingredients> listaIngredients = new ArrayList<>();
 
     public static List<Ingredients> getAllIngredients(){
@@ -26,11 +26,14 @@ public class BankListIngriendts {
                .findFirst().orElse(null);
     }
 
-    public static boolean save(String name, String unit_measure, BigDecimal current_balance, BigDecimal min_threshold, LocalDateTime created_at){
+
+    public static List<Ingredients> save(String name, String unit_measure, BigDecimal current_balance, BigDecimal min_threshold, LocalDateTime created_at){
         Ingredients ingredients = new Ingredients(name, unit_measure, current_balance, min_threshold, created_at);
-        return listaIngredients.add(ingredients);
+        listaIngredients.add(ingredients);
+        return listaIngredients;
 
     }
+
 
     public static boolean deleteId(UUID id){
         Ingredients ingredients = getIngredientsId(id);
@@ -40,6 +43,7 @@ public class BankListIngriendts {
         }
         return false;
     }
+
     public static boolean deleteName(String name) {
         return listaIngredients.stream()
                 .filter(i -> i.getName().equalsIgnoreCase(name) && i.getDeleted_at() == null)
@@ -50,6 +54,7 @@ public class BankListIngriendts {
                 })
                 .orElse(false);
     }
+
 
     public static boolean debitBalance(UUID ingrendientId, BigDecimal quantity){
 
