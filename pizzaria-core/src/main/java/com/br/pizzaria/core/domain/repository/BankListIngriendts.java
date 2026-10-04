@@ -4,6 +4,7 @@ import com.br.pizzaria.core.domain.models.Ingredients;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -38,7 +39,7 @@ public class BankListIngriendts  {
     public static boolean deleteId(UUID id){
         Ingredients ingredients = getIngredientsId(id);
         if (ingredients != null) {
-            ingredients.setDeleted_at(LocalDateTime.now());
+            ingredients.setDeleted_at(OffsetDateTime.now());
             return true;
         }
         return false;
@@ -49,7 +50,7 @@ public class BankListIngriendts  {
                 .filter(i -> i.getName().equalsIgnoreCase(name) && i.getDeleted_at() == null)
                 .findFirst()
                 .map(ingredient -> {
-                    ingredient.setDeleted_at(LocalDateTime.now());
+                    ingredient.setDeleted_at(OffsetDateTime.now());
                     return true;
                 })
                 .orElse(false);
@@ -64,7 +65,7 @@ public class BankListIngriendts  {
            BigDecimal novoSaldo = ingredient.getCurrent_balance().subtract(quantity);
 
            ingredient.setCurrent_balance(novoSaldo);
-           ingredient.setUpdated_at(LocalDateTime.now());
+           ingredient.setUpdated_at(OffsetDateTime.now());
 
            return true;
        }

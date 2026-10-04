@@ -9,20 +9,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public class JdbcIngredientDAO implements IngredientDAO {
 
+    private static final String BASE_SELECT_COLUMNS =
+            "SELECT id, tenant_id, name, unit_measure, current_balance, min_threshold, created_at, updated_at, deleted_at " +
+                    "FROM ingredients";
+
+
     @Override
     public Ingredients save(Connection connection, Ingredients ingredient) throws SQLException {
-
-        String sql =
-                """
-                INSERT INTO ingredients (tenant_id, name, unit_measure, current_balance, min_threshold)
-                VALUES (?, ?, ?, ?, ?) RETURNING id, created_at, updated_at
-                """ ;
+        String sql = """
+            INSERT INTO ingredients (tenant_id, name, unit_measure, current_balance, min_threshold)
+            VALUES (?, ?, ?, ?, ?)
+            RETURNING id, created_at, updated_at
+        """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setObject(1, ingredient.getTenant_id());
@@ -31,10 +36,8 @@ public class JdbcIngredientDAO implements IngredientDAO {
             stmt.setBigDecimal(4, ingredient.getCurrent_balance());
             stmt.setBigDecimal(5, ingredient.getMin_threshold());
 
-
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-
                     ingredient.setId(rs.getObject("id", UUID.class));
                     ingredient.setCreated_at(rs.getObject("created_at", OffsetDateTime.class));
                     ingredient.setUpdated_at(rs.getObject("updated_at", OffsetDateTime.class));
@@ -47,7 +50,7 @@ public class JdbcIngredientDAO implements IngredientDAO {
     @Override
     public Optional<Ingredients> findById(Connection connection, UUID id) throws SQLException {
 
-        String sql = "SELECT * FROM ingredients WHERE id = ? AND deleted_at IS NULL";
+        String sql = BASE_SELECT_COLUMNS + " WHERE id = ? AND deleted_at IS NULL";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setObject(1, id);
@@ -58,10 +61,49 @@ public class JdbcIngredientDAO implements IngredientDAO {
                 }
             }
         }
-
         return Optional.empty();
     }
 
+    @Override
+    public List<Ingredients> findAll(Connection connection) throws SQLException {
+        String sql = BASE_SELECT_COLUMNS + "WHERE deleted_at IS NULL ORDER BY name ASC";
+        List<Ingredients> ingredientsList = new ArrayList<>();
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                ingredientsList.add(mapResultSetToIngredient(rs));
+            }
+        }
+        return ingredientsList;
+    }
+
+    @Override
+    public boolean deleteById(Connection connection, UUID id) throws SQLException{
+        String sql = "UPDATE ingredients SET deleted_at = CURRENT_TIMESTAMP WHERE id = ? AND deleted_at IS NULL";
+        try(PreparedStatement stmt = connection.prepareStatement(sql)){
+            stmt.setObject(1, id);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
+
+
+    @Override
+    public boolean debitBalance(Connection connection, UUID id, BigDecimal amount) throws SQLException {
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0){
+            throw new IllegalArgumentException("O valor do débito deve ser maior que zero.");
+        }
+
+        String sql = "UPDATE ingredients SET current_balance = current_balance - ? WHERE id = ? AND deleted_at IS NULL";
+
+        try(PreparedStatement stmt = connection.prepareStatement(sql)){
+            stmt.setBigDecimal(1, amount);
+            stmt.setObject(1, id);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        }
+    }
 
     private Ingredients mapResultSetToIngredient(ResultSet rs) throws SQLException {
         Ingredients ingredient = new Ingredients();
@@ -73,30 +115,7 @@ public class JdbcIngredientDAO implements IngredientDAO {
         ingredient.setMin_threshold(rs.getBigDecimal("min_threshold"));
         ingredient.setCreated_at(rs.getObject("created_at", OffsetDateTime.class));
         ingredient.setUpdated_at(rs.getObject("updated_at", OffsetDateTime.class));
-
-
-        Object deletedAt = rs.getObject("deleted_at");
-        if (deletedAt != null) {
-            ingredient.setDeleted_at((OffsetDateTime) deletedAt);
-        }
-
+        ingredient.setDeleted_at(rs.getObject("deleted_at", OffsetDateTime.class));
         return ingredient;
-    }
-
-
-
-    @Override
-    public List<Ingredients> findAll(Connection connection) throws SQLException {
-        return List.of();
-    }
-
-    @Override
-    public boolean deleteById(Connection connection, UUID id) throws SQLException {
-        return false;
-    }
-
-    @Override
-    public boolean debitBalance(Connection connection, UUID id, BigDecimal amount) throws SQLException {
-        return false;
     }
 }
