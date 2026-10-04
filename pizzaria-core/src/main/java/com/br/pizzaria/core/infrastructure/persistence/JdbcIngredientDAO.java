@@ -17,8 +17,9 @@ import java.util.UUID;
 public class JdbcIngredientDAO implements IngredientDAO {
 
     private static final String BASE_SELECT_COLUMNS =
-            "SELECT id, tenant_id, name, unit_measure, current_balance, min_threshold, created_at, updated_at, deleted_at " +
-                    "FROM ingredients";
+            """
+             SELECT id, tenant_id, name, unit_measure, current_balance, min_threshold, created_at, updated_at, deleted_at FROM ingredients
+            """;
 
 
     @Override
