@@ -18,8 +18,8 @@ public class JdbcIngredientDAO implements IngredientDAO {
 
     private static final String BASE_SELECT_COLUMNS =
             """
-             SELECT id, tenant_id, name, unit_measure, current_balance, min_threshold, created_at, updated_at, deleted_at FROM ingredients
-            """;
+             SELECT id, tenant_id, name, unit_measure, current_balance, min_threshold, created_at, updated_at, deleted_at FROM ingredients\s
+           \s""";
 
 
     @Override
@@ -67,7 +67,7 @@ public class JdbcIngredientDAO implements IngredientDAO {
 
     @Override
     public List<Ingredients> findAll(Connection connection) throws SQLException {
-        String sql = BASE_SELECT_COLUMNS + "WHERE deleted_at IS NULL ORDER BY name ASC";
+        String sql = BASE_SELECT_COLUMNS + " WHERE deleted_at IS NULL ORDER BY name ASC ";
         List<Ingredients> ingredientsList = new ArrayList<>();
 
         try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
@@ -95,11 +95,11 @@ public class JdbcIngredientDAO implements IngredientDAO {
             throw new IllegalArgumentException("O valor do débito deve ser maior que zero.");
         }
 
-        String sql = "UPDATE ingredients SET current_balance = current_balance - ? WHERE id = ? AND deleted_at IS NULL";
+        String sql = " UPDATE ingredients SET current_balance = current_balance - ? WHERE id = ? AND deleted_at IS NULL ";
 
         try(PreparedStatement stmt = connection.prepareStatement(sql)){
             stmt.setBigDecimal(1, amount);
-            stmt.setObject(1, id);
+            stmt.setObject(2, id);
 
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
