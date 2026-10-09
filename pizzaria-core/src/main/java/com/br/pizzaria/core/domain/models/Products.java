@@ -11,13 +11,13 @@ public class Products {
     private String name;
     private BigDecimal base_price;
     private boolean is_active;
-    private LocalDateTime created_at;
-    private LocalDateTime updated_at;
-    private LocalDateTime deleted_at;
+    private OffsetDateTime created_at;
+    private OffsetDateTime updated_at;
+    private OffsetDateTime deleted_at;
 
     public Products(){}
 
-    public Products(String name, BigDecimal base_price, boolean is_active, LocalDateTime created_at) {
+    public Products(String name, BigDecimal base_price, boolean is_active, OffsetDateTime created_at) {
         this.id = UUID.randomUUID();
         this.tenant_id = UUID.randomUUID();
         this.name = name;
@@ -50,27 +50,27 @@ public class Products {
     }
 
 
-    public LocalDateTime getCreated_at() {
+    public OffsetDateTime getCreated_at() {
         return this.created_at;
     }
 
-    public LocalDateTime getUpdated_at() {
+    public OffsetDateTime getUpdated_at() {
         return this.updated_at;
     }
 
-    public LocalDateTime getDeleted_at() {
+    public OffsetDateTime getDeleted_at() {
         return this.deleted_at;
     }
 
-    public void setDeleted_at(LocalDateTime deleted_at) {
+    public void setDeleted_at(OffsetDateTime deleted_at) {
         this.deleted_at = deleted_at;
     }
 
-    public void setUpdated_at(LocalDateTime updated_at) {
+    public void setUpdated_at(OffsetDateTime updated_at) {
         this.updated_at = updated_at;
     }
 
-    public void setCreated_at(LocalDateTime created_at) {
+    public void setCreated_at(OffsetDateTime created_at) {
         this.created_at = created_at;
     }
 }

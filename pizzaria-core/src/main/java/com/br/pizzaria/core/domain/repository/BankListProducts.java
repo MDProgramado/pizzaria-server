@@ -4,6 +4,7 @@ import com.br.pizzaria.core.domain.models.Products;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -24,14 +25,14 @@ public class BankListProducts {
                 .orElse(null);
     }
 
-    public static boolean save(String name, BigDecimal base_price, boolean is_active, LocalDateTime created_at) {
+    public static boolean save(String name, BigDecimal base_price, boolean is_active, OffsetDateTime created_at) {
         Products products = new Products(name, base_price, is_active, created_at);
         return listaProdutos.add(products);
     }
     public static boolean deleteId(UUID id){
         Products products = getProductsId(id);
         if (products != null){
-            products.setDeleted_at(LocalDateTime.now());
+            products.setDeleted_at(OffsetDateTime.now());
             return true;
         }
         return false;
@@ -41,7 +42,7 @@ public class BankListProducts {
                 .filter(i -> i.getName().equalsIgnoreCase(name) && i.isIs_active())
                 .findFirst()
                 .map(product -> {
-                    product.setDeleted_at(LocalDateTime.now());
+                    product.setDeleted_at(OffsetDateTime.now());
                     product.setIs_active(false);
                     return true;
                 })
