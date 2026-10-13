@@ -30,6 +30,22 @@ public class Products {
         return this.id;
     }
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setTenant_id(UUID tenant_id) {
+        this.tenant_id = tenant_id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setBase_price(BigDecimal base_price) {
+        this.base_price = base_price;
+    }
+
     public UUID getTenant_id() {
         return this.tenant_id;
     }

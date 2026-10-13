@@ -26,7 +26,7 @@ public class JdbcIngredientDAO implements IngredientDAO {
     public Ingredients save(Connection connection, Ingredients ingredient) throws SQLException {
         String sql = """
             INSERT INTO ingredients (tenant_id, name, unit_measure, current_balance, min_threshold)
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (?, ?, ?,  ?, ?)
             RETURNING id, created_at, updated_at
         """;
 
