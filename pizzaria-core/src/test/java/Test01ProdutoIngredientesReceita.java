@@ -1,7 +1,7 @@
 
 import com.br.pizzaria.core.domain.models.Ingredients;
 import com.br.pizzaria.core.domain.models.Products;
-import com.br.pizzaria.core.domain.models.ProductsRecipes;
+
 import com.br.pizzaria.core.domain.repository.BankListIngriendts;
 import com.br.pizzaria.core.domain.repository.BankListProducts;
 import com.br.pizzaria.core.domain.repository.BankListProductsRecipes;
@@ -9,16 +9,17 @@ import com.br.pizzaria.core.domain.repository.BankListProductsRecipes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 
 public class Test01ProdutoIngredientesReceita {
     public static void main(String[] args) {
 
         // 1. Salva o Produto
-        BankListProducts.save("Pizza Calabresa", new BigDecimal("45.00"), true, LocalDateTime.now());
+        BankListProducts.save("Pizza Calabresa", new BigDecimal("45.00"), true, OffsetDateTime.now());
 
         // Pega o produto salvo na lista (o primeiro item adicionado)
-        Products produtoSalvo = BankListProducts.getAllProducts().get(0);
+        Products produtoSalvo = BankListProducts.getAllProducts().getFirst();
         System.out.println("Produto salvo: " + produtoSalvo.getName());
 
 
@@ -32,7 +33,7 @@ public class Test01ProdutoIngredientesReceita {
         );
 
         // Pega o ingrediente salvo na lista
-        Ingredients ingredienteSalvo = BankListIngriendts.getAllIngredients().get(0);
+        Ingredients ingredienteSalvo = BankListIngriendts.getAllIngredients().getFirst();
         System.out.println("Ingrediente salvo: " + ingredienteSalvo.getName());
 
 

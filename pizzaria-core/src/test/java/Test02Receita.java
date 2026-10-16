@@ -8,6 +8,7 @@ import com.br.pizzaria.core.domain.services.RecipeService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public class Test02Receita {
 
@@ -15,7 +16,7 @@ public class Test02Receita {
 
 
 
-        BankListProducts.save("Pizza Calabresa", new BigDecimal("45.00"), true, LocalDateTime.now());
+        BankListProducts.save("Pizza Calabresa", new BigDecimal("45.00"), true, OffsetDateTime.now());
 
 
         Products produtoSalvo = BankListProducts.getAllProducts().get(0);
