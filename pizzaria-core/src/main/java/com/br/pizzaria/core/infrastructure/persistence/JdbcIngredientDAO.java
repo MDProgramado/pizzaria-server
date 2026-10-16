@@ -66,7 +66,7 @@ public class JdbcIngredientDAO implements IngredientDAO {
     }
 
     @Override
-    public List<Ingredients> findAll(Connection connection) throws SQLException {
+    public List<Ingredients> findAll(Connection connection) throws SQLException  {
         String sql = BASE_SELECT_COLUMNS + " WHERE deleted_at IS NULL ORDER BY name ASC ";
         List<Ingredients> ingredientsList = new ArrayList<>();
 

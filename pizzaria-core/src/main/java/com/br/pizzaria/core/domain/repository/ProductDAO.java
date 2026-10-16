@@ -2,7 +2,7 @@ package com.br.pizzaria.core.domain.repository;
 
 import com.br.pizzaria.core.domain.models.Products;
 
-import java.math.BigDecimal;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -18,5 +18,5 @@ public interface ProductDAO {
 
     boolean deleteById(Connection connection, UUID id) throws  SQLException;
 
-    boolean debitBalance(Connection connection, UUID id, BigDecimal amount) throws  SQLException;
+
 }
