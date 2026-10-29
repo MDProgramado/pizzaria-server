@@ -18,12 +18,12 @@ public class BankListProductsRecipes {
 
     public static List<ProductsRecipes> getRecipesByProductId(UUID id){
         return listaReceitaProdutos.stream()
-                .filter(i -> i.getProduct_Id().equals(id))
+                .filter(i -> i.getProductId().equals(id))
                 .toList();
     }
 
-  public static boolean save(Products productId, Ingredients ingredientId, BigDecimal quantityRequired){
-        ProductsRecipes productsRecipes = new ProductsRecipes(productId, ingredientId,quantityRequired);
+  public static boolean save(UUID productId, UUID ingredientId, BigDecimal quantityRequired, UUID tenant_id){
+        ProductsRecipes productsRecipes = new ProductsRecipes(productId, ingredientId,quantityRequired, tenant_id);
         return listaReceitaProdutos.add(productsRecipes);
   }
 

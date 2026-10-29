@@ -10,13 +10,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ProductDAO {
-    Products save(Connection connection, Products products) throws SQLException;
+    Products             save(Connection connection, Products products) throws SQLException;
 
-    List<Products> findAll(Connection connection) throws SQLException;
+    List<Products>       findAll(Connection connection)                 throws SQLException;
 
-    Optional<Products> findById(Connection connection, UUID id) throws  SQLException;
+    Optional<Products>   findById(Connection connection, UUID id)       throws  SQLException;
 
-    boolean deleteById(Connection connection, UUID id) throws  SQLException;
+    boolean              deleteById(Connection connection, UUID id)     throws  SQLException;
 
 
 }

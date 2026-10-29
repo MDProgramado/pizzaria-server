@@ -37,12 +37,7 @@ public class Test02Receita {
         System.out.println("Ingrediente salvo: " + ingredienteSalvo.getName());
 
 
-        // 3. Salva a Receita associando o Produto e o Ingrediente
-        var receitaSalva = BankListProductsRecipes.save(
-                produtoSalvo,
-                ingredienteSalvo,
-                new BigDecimal("200") // quantidade necessária
-        );
+
 
 
 
